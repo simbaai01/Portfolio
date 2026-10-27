@@ -1,15 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { portfolioPath } from "@/lib/site-paths"
 
-const CANDIDATES = [
-  portfolioPath("/profile-photo.jpg"),
-  portfolioPath("/profile-photo.jpeg"),
-  portfolioPath("/profile-photo.png"),
-  portfolioPath("/profile-photo.webp"),
-  portfolioPath("/profile-photo.svg"),
-] as const
+const PHOTO_JPG = portfolioPath("/profile-photo.jpg")
+const PHOTO_JPEG = portfolioPath("/profile-photo.jpeg")
 
 const FALLBACK_SVG = encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
@@ -25,37 +20,8 @@ const DATA_URI = `data:image/svg+xml;charset=utf-8,${FALLBACK_SVG}`
 const avatarClassName =
   "block h-[76px] w-[76px] shrink-0 rounded-full border-2 border-muted-foreground/45 bg-muted object-cover lg:h-[92px] lg:w-[92px]"
 
-async function exists(path: string): Promise<boolean> {
-  try {
-    const r = await fetch(path, { method: "HEAD", cache: "force-cache" })
-    if (r.ok) return true
-    if (r.status === 405) {
-      const g = await fetch(path, { method: "GET", cache: "force-cache" })
-      return g.ok
-    }
-    return false
-  } catch {
-    return false
-  }
-}
-
 export function ProfileAvatar() {
-  const [src, setSrc] = useState<string>(DATA_URI)
-
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      for (const path of CANDIDATES) {
-        if (await exists(path)) {
-          if (!cancelled) setSrc(path)
-          return
-        }
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const [src, setSrc] = useState(PHOTO_JPG)
 
   return (
     <img
@@ -66,6 +32,10 @@ export function ProfileAvatar() {
       loading="eager"
       decoding="async"
       className={avatarClassName}
+      onError={() => {
+        if (src === PHOTO_JPG) setSrc(PHOTO_JPEG)
+        else if (src === PHOTO_JPEG) setSrc(DATA_URI)
+      }}
     />
   )
 }

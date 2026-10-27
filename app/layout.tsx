@@ -7,21 +7,8 @@ export const metadata: Metadata = {
   title: "Anubhav Dhawan Portfolio",
   description: "AI/ML product leadership.",
   icons: {
-    icon: [
-      {
-        url: portfolioPath("/icon-light-32x32.png"),
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: portfolioPath("/icon-dark-32x32.png"),
-        media: "(prefers-color-scheme: dark)",
-      },
-      {
-        url: portfolioPath("/icon.svg"),
-        type: "image/svg+xml",
-      },
-    ],
-    apple: portfolioPath("/apple-icon.png"),
+    icon: [{ url: portfolioPath("/profile-photo.jpg"), type: "image/jpeg" }],
+    apple: [{ url: portfolioPath("/profile-photo.jpg"), type: "image/jpeg" }],
   },
 }
 
