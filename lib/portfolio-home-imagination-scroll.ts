@@ -1,6 +1,6 @@
 import { portfolioPath } from "@/lib/site-paths"
 
-/** WhimsyWorks pair slides at end of home scroll (image + blurb side by side). */
+/** Whimsy Toon Studios pair slides at end of home scroll (image + blurb side by side). */
 export type PortfolioImaginationScrollPair = {
   id: string
   imagePath: string
@@ -22,6 +22,6 @@ export const PORTFOLIO_IMAGINATION_SCROLL_PAIRS: PortfolioImaginationScrollPair[
     imagePath: portfolioPath("/KitCatStage.png"),
     imageAlt: "Kit Cat character",
     heading: "Kit Cat",
-    blurb: "A transcendental cat who will lead all of us to salvation. All bow to thee!",
+    blurb: "A transcendental cat who will lead all of us to salvation. Fold your hands everyone!",
   },
 ]

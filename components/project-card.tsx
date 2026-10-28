@@ -384,6 +384,10 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
   const undisclosedArtifacts = project.artifactModalUndisclosed === true
   const showArtifactButton = hasArtifactModalContent(project) && !undisclosedArtifacts
   const artifactGroups = project.artifactModalGroups ?? []
+  const showArtifactFooter =
+    undisclosedArtifacts ||
+    showArtifactButton ||
+    (project.artifactLinks?.length ?? 0) > 0
   const cat = project.category
   const linkClass = `inline-flex items-center gap-2 text-sm font-medium underline-offset-4 hover:underline transition-colors ${categoryLinkClass[cat]}`
   const useMinimalArtifactModal =
@@ -411,7 +415,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
   if (
     project.layout === "inspirational-cartoons" &&
     inspirationalColumns >= 2 &&
-    inspirationalColumns <= 3
+    inspirationalColumns <= 4
   ) {
     return <InspirationalCartoonsProjectCard project={project} index={index} />
   }
@@ -435,6 +439,26 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 >
                   {project.title}
                 </h3>
+                {project.titleHref ? (
+                  <a
+                    href={project.titleHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 underline underline-offset-4 hover:text-blue-700"
+                  >
+                    {project.titleHrefYoutube ? (
+                      <img
+                        src={portfolioPath("/tmys-arch/youtube-logo.png")}
+                        alt=""
+                        className="h-4 w-auto shrink-0"
+                        width={16}
+                        height={12}
+                      />
+                    ) : null}
+                    <span>{project.titleHrefLabel ?? "Link"}</span>
+                    {project.titleHrefYoutube ? null : <ExternalLink className="size-3.5" />}
+                  </a>
+                ) : null}
               </div>
             </PortfolioRevealBlock>
             <PortfolioRevealBlock delayMs={t.meta}>
@@ -481,6 +505,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           </PortfolioRevealBlock>
         ) : null}
 
+        {showArtifactFooter ? (
         <PortfolioRevealBlock delayMs={t.footer}>
           <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-border pt-4">
           {undisclosedArtifacts ? (
@@ -567,6 +592,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
           })}
         </div>
         </PortfolioRevealBlock>
+        ) : null}
 
         <div
           className={`absolute right-0 top-0 h-24 w-24 translate-x-12 -translate-y-12 rounded-full transition-transform group-hover/pcard:translate-x-10 group-hover/pcard:-translate-y-10 ${categoryCornerGlowClass[cat]}`}

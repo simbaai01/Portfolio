@@ -14,6 +14,8 @@ export type InspirationalCartoonsColumn = {
   description: string
   quotes: string[]
   youtubeUrl: string
+  /** Optional line shown under the Subscribe link (e.g. Ms Piggy). */
+  tagline?: string
 }
 
 /** Impact grouped as a heading with nested bullets (optional). */
@@ -54,6 +56,12 @@ export interface Project {
    * Use with a full `artifacts` list; “View Artifacts” still opens all slides.
    */
   artifactModalGroups?: { label: string; artifactIndex: number }[]
+  /** Optional URL shown as a link beside the card title. */
+  titleHref?: string
+  /** Label for `titleHref` (e.g. Channel, tmys.ai). */
+  titleHrefLabel?: string
+  /** When true, `titleHref` is shown with the YouTube icon. */
+  titleHrefYoutube?: boolean
   /** Custom character showcase card (Imagination Labs). */
   layout?: "inspirational-cartoons"
   /** Required when `layout` is `inspirational-cartoons` (two or three entries). */
@@ -67,6 +75,8 @@ export interface Project {
     sharedYoutubeUrl?: string
     /** Auto-cycling stills shown under the character row (e.g. CPTVerse scenes). */
     revolvingSceneImages?: string[]
+    /** First two columns stack on the left; the third sits on the right (Whimsy). */
+    stackFirstTwoOnLeft?: boolean
   }
 }
 
@@ -465,19 +475,18 @@ export const projects: Project[] = [
   },
   {
     id: "tmys",
-    title: "Tell Me Your Story (TMYS)",
+    title: "Tell Me Your Story",
     category: "Imagination Labs",
     role: "Experimenter / AI Product Builder",
     goal:
       "Build an AI-native content platform that transforms user prompts into fully generated long form videos with character, voice and scene continuity",
     impactSectionLabel: "Accomplishments",
     impactBullets: [
-      "Designed and prototyped a multi-agent AI pipeline for automated storytelling",
-      "Validated feasibility of generating consistent characters, scenes, and narrative flow using GenAI",
-      "Reduced manual video production effort by ~80 –90%",
-      "Established foundation for a scalable AI content platform (YouTube-first distribution, SaaS potential)",
-      "Automated the end-to-end pipeline from screenplay creation to final video production and distribution",
-      "Building the consistency harness to overcome the limitations of the current diffusion models.",
+      "Built an end-to-end AI storytelling pipeline that transforms story ideas and screenplays into generated scenes and finished videos.",
+      "Developed a multi-agent AI workflow to orchestrate storytelling, character-driven scenes, and video production.",
+      "Designed a consistency harness to manage continuity across characters, voices, locations, and sequential scenes despite the limitations of generative video models.",
+      "Optimized video production workflows to reduce manual effort and target lower generation costs through intelligent orchestration and playback-speed optimization.",
+      "Built the foundation for a scalable SaaS platform that empowers creators to produce and publish AI-generated video content.",
     ],
     toolkit: [
       "Intelligent Situation and Screenplay Generation",
@@ -488,6 +497,7 @@ export const projects: Project[] = [
       "Agentic Architecture",
       "GPT-4o",
       "Google Veo-3",
+      "Seedance",
       "Nano Banana",
       "Elevenlabs Audio Generation",
       "Agentic Evaluation",
@@ -496,10 +506,83 @@ export const projects: Project[] = [
     bottomLine:
       "Created a harness around video GenAI models for enforcing character, voice and scene continuity for long form videos",
     artifacts: [],
-    artifactModalUndisclosed: true,
-    artifactLinks: [
-      { kind: "external", label: "Demo Video", url: "https://www.youtube.com/watch?v=YveTm6DmPWM" },
-      { kind: "tmysMap", label: "TMYS Agentic Map" },
+    titleHref: "https://www.tmys.ai",
+    titleHrefLabel: "tmys.ai",
+  },
+  {
+    id: "inspirational-cartoons",
+    title: "Whimsy Toon Studios",
+    category: "Imagination Labs",
+    role: "Chief Joy Arrchitect",
+    goal: "Create delightful, emotionally engaging content experiences",
+    impact: "Built a repeatable system that engaged audience on a regular basis",
+    toolkit: ["Tell Me Your Story"],
+    artifacts: [],
+    titleHref: "https://www.youtube.com/@WhimsyToonStudios",
+    titleHrefLabel: "Channel",
+    titleHrefYoutube: true,
+    layout: "inspirational-cartoons",
+    inspirationalCartoonsOptions: {
+      stackFirstTwoOnLeft: true,
+    },
+    inspirationalCartoonsColumns: [
+      {
+        characterName: "Dolma Doggie",
+        image: `${INSPIRATIONAL_CARTOONS_PORTFOLIO}/DolmaDoggieStage.png`,
+        description:
+          "A dog who's sole purpose is to tell us cheesy dad jokes. Beware!",
+        youtubeUrl: "https://www.youtube.com/@DolmaDoggieJokes/shorts",
+        quotes: [
+          "Why did the math book look so stressed? Because it had too many problems.",
+          "Why do Cows wear bells? Because their horns don't work.",
+          "Did you hear about the guy who invented lifesavers? He made a mint!",
+          "Why don't scientists trust atoms? Because they make up everything.",
+          "The Black Eyed Peas can sing us a tune. But chickpeas can only Hummus one!",
+          "I told my wife I was building a model of the Everest mountain range. She asked: Is it to scale? I replied: No, it is just to look at.",
+          "I am on a seafood diet. Whenever I see food, I eat it.",
+          "I ordered a chicken and an egg online. I will let you know!",
+          "Which cats go to bowling? Alley Cats.",
+          "Which phones do turtles use? Shell-phones.",
+          "I started a band called '999 Megabytes'. We haven't gotten a gig yet.",
+        ],
+      },
+      {
+        characterName: "Ms Piggy De Moogy",
+        image: `${INSPIRATIONAL_CARTOONS_PORTFOLIO}/MsPiggyDeMoogy.jpg`,
+        description: "A star singer who knows that she's the best. All bow to thee.",
+        youtubeUrl: "https://www.youtube.com/@WhimsyToonStudios",
+        tagline: "Even my mistakes are fashionable",
+        quotes: [],
+      },
+      {
+        characterName: "Kit Cat",
+        image: `${INSPIRATIONAL_CARTOONS_PORTFOLIO}/KitCatStage.png`,
+        description:
+          "A transcendental cat who will lead all of us to salvation. Fold your hands everyone!",
+        youtubeUrl: "https://www.youtube.com/@KitCatSpiritual/shorts",
+        quotes: [
+          "You don't have a soul. You are the soul. You have a body",
+          "A gem can't be polished without friction, nor man perfected without trial",
+          "Sometimes, just a change of perspective is all it takes to solve a problem",
+          "The only way to get the best of an argument is to avoid it",
+          "We are here in this world not to change our destiny, but to fulfil it",
+          "Some succeed because they are destined to, but most succeed because they are determined to",
+          "Don't depend too much on anyone in the world because even your shadow leaves you when you are in darkness",
+          "If God causes you to suffer much, He certainly intends to make you a saint",
+          "Tact is the art of making a point without making an enemy",
+          "For those who believe, no proof is necessary; For those who disbelieve, no proof is sufficient",
+          "Rest for mind is as necessary as for the body, because the body will rest only when the mind is in rest",
+        ],
+      },
+      {
+        characterName: "Scammy Scamerson",
+        image: `${INSPIRATIONAL_CARTOONS_PORTFOLIO}/ScammyScamerson.jpg`,
+        description:
+          "Your conman who thinks he's smart, only until he meets someone smarter. Get ready to dial 911.",
+        youtubeUrl: "https://www.youtube.com/@WhimsyToonStudios",
+        tagline: "Your account has been hacked, madam!",
+        quotes: [],
+      },
     ],
   },
   {
@@ -512,19 +595,9 @@ export const projects: Project[] = [
       "Generated a consistent web series around the adventure of three friends, Cid, Pat and Tim.",
     toolkit: ["Tell Me Your Story"],
     artifacts: [],
-    artifactModalUndisclosed: true,
-    artifactLinks: [
-      {
-        kind: "external",
-        label: "Introduction",
-        url: "https://www.youtube.com/watch?v=LwUNYk253b0",
-      },
-      {
-        kind: "external",
-        label: "Workflow Demo",
-        url: "https://www.youtube.com/watch?v=p90oSo161jk",
-      },
-    ],
+    titleHref: "https://www.youtube.com/@cptverse",
+    titleHrefLabel: "Channel",
+    titleHrefYoutube: true,
     layout: "inspirational-cartoons",
     inspirationalCartoonsOptions: {
       circularImages: true,
@@ -556,59 +629,6 @@ export const projects: Project[] = [
         description: "",
         quotes: [],
         youtubeUrl: "",
-      },
-    ],
-  },
-  {
-    id: "inspirational-cartoons",
-    title: "WhimsyWorks Toon Studios",
-    category: "Imagination Labs",
-    role: "Chief Joy Arrchitect",
-    goal: "Create delightful, emotionally engaging content experiences",
-    impact: "Built a repeatable system that engaged audience on a regular basis",
-    toolkit: ["Tell Me Your Story"],
-    artifacts: [],
-    layout: "inspirational-cartoons",
-    inspirationalCartoonsColumns: [
-      {
-        characterName: "Dolma Doggie",
-        image: `${INSPIRATIONAL_CARTOONS_PORTFOLIO}/DolmaDoggieStage.png`,
-        description:
-          "A dog who's sole purpose is to tell us cheesy dad jokes. Beware!",
-        youtubeUrl: "https://www.youtube.com/@DolmaDoggieJokes/shorts",
-        quotes: [
-          "Why did the math book look so stressed? Because it had too many problems.",
-          "Why do Cows wear bells? Because their horns don't work.",
-          "Did you hear about the guy who invented lifesavers? He made a mint!",
-          "Why don't scientists trust atoms? Because they make up everything.",
-          "The Black Eyed Peas can sing us a tune. But chickpeas can only Hummus one!",
-          "I told my wife I was building a model of the Everest mountain range. She asked: Is it to scale? I replied: No, it is just to look at.",
-          "I am on a seafood diet. Whenever I see food, I eat it.",
-          "I ordered a chicken and an egg online. I will let you know!",
-          "Which cats go to bowling? Alley Cats.",
-          "Which phones do turtles use? Shell-phones.",
-          "I started a band called '999 Megabytes'. We haven't gotten a gig yet.",
-        ],
-      },
-      {
-        characterName: "Kit Cat",
-        image: `${INSPIRATIONAL_CARTOONS_PORTFOLIO}/KitCatStage.png`,
-        description:
-          "A transcendental cat who will lead all of us to salvation. All bow to thee!",
-        youtubeUrl: "https://www.youtube.com/@KitCatSpiritual/shorts",
-        quotes: [
-          "You don't have a soul. You are the soul. You have a body",
-          "A gem can't be polished without friction, nor man perfected without trial",
-          "Sometimes, just a change of perspective is all it takes to solve a problem",
-          "The only way to get the best of an argument is to avoid it",
-          "We are here in this world not to change our destiny, but to fulfil it",
-          "Some succeed because they are destined to, but most succeed because they are determined to",
-          "Don't depend too much on anyone in the world because even your shadow leaves you when you are in darkness",
-          "If God causes you to suffer much, He certainly intends to make you a saint",
-          "Tact is the art of making a point without making an enemy",
-          "For those who believe, no proof is necessary; For those who disbelieve, no proof is sufficient",
-          "Rest for mind is as necessary as for the body, because the body will rest only when the mind is in rest",
-        ],
       },
     ],
   },

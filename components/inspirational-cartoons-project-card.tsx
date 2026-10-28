@@ -32,6 +32,12 @@ import {
 
 const YOUTUBE_LOGO_SRC = portfolioPath("/tmys-arch/youtube-logo.png")
 
+/** Project data stores `/portfolio/...`; raw img needs `basePath` + `/portfolio`. */
+function cartoonAssetSrc(path: string) {
+  const withoutPublicPrefix = path.replace(/^\/portfolio/, "")
+  return portfolioPath(withoutPublicPrefix.startsWith("/") ? withoutPublicPrefix : `/${withoutPublicPrefix}`)
+}
+
 /** Dolma Doggie column (left) — dad jokes. */
 const DOLMA_QUOTE_INTERVAL_MS = 7_000
 /** Kit Cat column (right) — spiritual quotes. */
@@ -91,7 +97,7 @@ function RevolvingSceneGallery({ images }: { images: string[] }) {
             >
               <div className="absolute inset-0 bg-card p-2">
                 <img
-                  src={src}
+                  src={cartoonAssetSrc(src)}
                   alt={`CPTVerse scene ${index + 1}`}
                   className="h-full w-full object-contain object-center"
                 />
@@ -165,6 +171,9 @@ function InspirationalColumn({
   const quote = column.quotes[quoteIndex] ?? ""
   const impactTone = categoryImpactTextClass[cat]
   const showDescription = !hideDescriptions && Boolean(column.description.trim())
+  const showYoutube = showPerColumnYoutube && Boolean(column.youtubeUrl.trim())
+  const tagline = column.tagline?.trim() ?? ""
+  const showTagline = Boolean(tagline)
 
   if (circularImages) {
     return (
@@ -176,7 +185,7 @@ function InspirationalColumn({
         </h4>
         <div className="relative size-40 shrink-0 overflow-hidden rounded-full border-2 border-amber-500/35 bg-muted/30 shadow-[0_10px_30px_rgba(245,158,11,0.18)] sm:size-44">
           <img
-            src={column.image}
+            src={cartoonAssetSrc(column.image)}
             alt={column.characterName}
             className="h-full w-full object-cover object-[center_15%]"
           />
@@ -194,19 +203,19 @@ function InspirationalColumn({
       </h4>
       <div
         className={
-          showDescription || showPerColumnYoutube || showQuotes
+          showDescription || showYoutube || showTagline || showQuotes
             ? "flex w-full items-start justify-center gap-4"
             : "flex w-full justify-center"
         }
       >
         <div className="relative aspect-[9/16] w-full max-w-48 shrink-0 overflow-hidden rounded-lg bg-muted/30">
           <img
-            src={column.image}
+            src={cartoonAssetSrc(column.image)}
             alt={column.characterName}
             className="h-full w-full object-contain object-center"
           />
         </div>
-        {showDescription || showPerColumnYoutube || showQuotes ? (
+        {showDescription || showYoutube || showTagline || showQuotes ? (
           <div className="mt-12 flex w-full max-w-48 flex-col items-start justify-center">
             {showDescription ? (
               <p
@@ -215,7 +224,7 @@ function InspirationalColumn({
                 {column.description}
               </p>
             ) : null}
-            {showPerColumnYoutube ? (
+            {showYoutube ? (
               <a
                 href={column.youtubeUrl}
                 target="_blank"
@@ -225,6 +234,13 @@ function InspirationalColumn({
                 <img src={YOUTUBE_LOGO_SRC} alt="" className="h-4 w-auto shrink-0" width={16} height={12} />
                 <span>Subscribe</span>
               </a>
+            ) : null}
+            {showTagline ? (
+              <p
+                className={`${showDescription || showYoutube ? "mt-3" : ""} w-full text-left text-sm italic leading-relaxed text-foreground`}
+              >
+                {tagline}
+              </p>
             ) : null}
             {showQuotes ? (
               <blockquote
@@ -299,7 +315,7 @@ export function InspirationalCartoonsProjectCard({ project, index }: Inspiration
   const reduceMotion = useReducedMotion()
   const revealActive = reduceMotion || inView
 
-  if (columnCount < 2 || columnCount > 3) return null
+  if (columnCount < 2 || columnCount > 4) return null
 
   const openArtifactModalGroup = (artifactIndex: number) => {
     setArtifactModalProject(projectWithSingleArtifact(project, artifactIndex))
@@ -335,6 +351,20 @@ export function InspirationalCartoonsProjectCard({ project, index }: Inspiration
               >
                 {project.title}
               </h3>
+              {project.titleHref ? (
+                <a
+                  href={project.titleHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-blue-600 underline underline-offset-4 hover:text-blue-700"
+                >
+                  {project.titleHrefYoutube ? (
+                    <img src={YOUTUBE_LOGO_SRC} alt="" className="h-4 w-auto shrink-0" width={16} height={12} />
+                  ) : null}
+                  <span>{project.titleHrefLabel ?? "Link"}</span>
+                  {project.titleHrefYoutube ? null : <ExternalLink className="size-3.5" />}
+                </a>
+              ) : null}
             </div>
           </PortfolioRevealBlock>
           <PortfolioRevealBlock delayMs={t.meta}>
@@ -415,27 +445,62 @@ export function InspirationalCartoonsProjectCard({ project, index }: Inspiration
         </PortfolioRevealBlock>
       </div>
 
-      <div
-        className={
-          columnCount === 3
-            ? "grid gap-10 md:grid-cols-3 md:gap-6"
-            : "grid gap-10 md:grid-cols-2 md:gap-8"
-        }
-      >
-        {columns.map((column, i) => (
-          <PortfolioRevealBlock key={column.characterName} delayMs={t.impact + i * 70}>
-            <InspirationalColumn
-              column={column}
-              cat={cat}
-              quoteIntervalMs={i === 0 ? DOLMA_QUOTE_INTERVAL_MS : KIT_CAT_QUOTE_INTERVAL_MS}
-              circularImages={options?.circularImages}
-              hideQuotes={options?.hideQuotes}
-              hideDescriptions={options?.hideDescriptions}
-              showPerColumnYoutube={showPerColumnYoutube}
-            />
-          </PortfolioRevealBlock>
-        ))}
-      </div>
+      {options?.stackFirstTwoOnLeft && columnCount >= 3 ? (
+        <div className="grid gap-10 md:grid-cols-2 md:gap-8 md:items-start">
+          <div className="flex flex-col gap-10">
+            {columns.slice(0, 2).map((column, i) => (
+              <PortfolioRevealBlock key={column.characterName} delayMs={t.impact + i * 70}>
+                <InspirationalColumn
+                  column={column}
+                  cat={cat}
+                  quoteIntervalMs={i === 0 ? DOLMA_QUOTE_INTERVAL_MS : KIT_CAT_QUOTE_INTERVAL_MS}
+                  circularImages={options?.circularImages}
+                  hideQuotes={options?.hideQuotes}
+                  hideDescriptions={options?.hideDescriptions}
+                  showPerColumnYoutube={showPerColumnYoutube}
+                />
+              </PortfolioRevealBlock>
+            ))}
+          </div>
+          <div className="flex flex-col gap-10">
+            {columns.slice(2).map((column, i) => (
+              <PortfolioRevealBlock key={column.characterName} delayMs={t.impact + (i + 2) * 70}>
+                <InspirationalColumn
+                  column={column}
+                  cat={cat}
+                  quoteIntervalMs={KIT_CAT_QUOTE_INTERVAL_MS}
+                  circularImages={options?.circularImages}
+                  hideQuotes={options?.hideQuotes}
+                  hideDescriptions={options?.hideDescriptions}
+                  showPerColumnYoutube={showPerColumnYoutube}
+                />
+              </PortfolioRevealBlock>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div
+          className={
+            columnCount === 3
+              ? "grid gap-10 md:grid-cols-3 md:gap-6"
+              : "grid gap-10 md:grid-cols-2 md:gap-8"
+          }
+        >
+          {columns.map((column, i) => (
+            <PortfolioRevealBlock key={column.characterName} delayMs={t.impact + i * 70}>
+              <InspirationalColumn
+                column={column}
+                cat={cat}
+                quoteIntervalMs={i === 0 ? DOLMA_QUOTE_INTERVAL_MS : KIT_CAT_QUOTE_INTERVAL_MS}
+                circularImages={options?.circularImages}
+                hideQuotes={options?.hideQuotes}
+                hideDescriptions={options?.hideDescriptions}
+                showPerColumnYoutube={showPerColumnYoutube}
+              />
+            </PortfolioRevealBlock>
+          ))}
+        </div>
+      )}
 
       {revolvingSceneImages.length > 0 ? (
         <PortfolioRevealBlock delayMs={t.impact + columnCount * 70}>
